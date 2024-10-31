@@ -1,4 +1,5 @@
 const userModel = require("../models/user.model");
+const patientModel = require("../models/patient.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
@@ -8,12 +9,12 @@ const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 
 // register
 const register = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, username, password, birthDate } = req.body;
 
   if (!email || !username || !password)
-    return res
-      .status(400)
-      .json({ message: "Email, username and password are required!" });
+    return res.status(400).json({
+      message: "Email, username and password are required!",
+    });
 
   // check if email or username already exists
   const duplicateEmail = await userModel.findOne({ email });
@@ -24,10 +25,17 @@ const register = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = { email: email, username: username, password: hashedPassword };
+    const user = {
+      email: email,
+      username: username,
+      password: hashedPassword,
+      birthDate: birthDate,
+    };
 
-    const { password, ...data } = await userModel.create(user);
-    return res.status(201).json(data);
+    const { password, ...data } = await patientModel.create(user);
+    return res
+      .status(201)
+      .json({ data, message: "User created successfully." });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -35,38 +43,45 @@ const register = async (req, res) => {
 
 // login
 const login = async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const user = await userModel.findOne({ username });
+    const user = await userModel.findOne({ email });
     if (!user) return res.status(404).json({ message: "User not found." });
 
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch)
-      return res.status(401).json({ error: "Invalid credentials" });
+      return res.status(401).json({ error: "Invalid password" });
 
     const accessToken = jwt.sign({ userId: user._id }, ACCESS_TOKEN_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "15s",
     });
-    const refreshToken = jwt.sign({ userId: user._id }, REFRESH_TOKEN_SECRET, {
-      expiresIn: "1d",
-    });
+    const newRefreshToken = jwt.sign(
+      { userId: user._id },
+      REFRESH_TOKEN_SECRET,
+      {
+        expiresIn: "1d",
+      }
+    );
 
     // saving refresh token with current user
-    const updatedUser = await userModel.findByIdAndUpdate(user._id, {
-      refreshToken: refreshToken,
-    });
+    const updatedUser = await userModel.findByIdAndUpdate(
+      user._id,
+      { refreshToken: newRefreshToken },
+      { new: true }
+    );
 
     if (updatedUser) {
-      res.cookie("jwt", refreshToken, {
+      res.cookie("jwt", newRefreshToken, {
         httpOnly: true,
         sameSite: "None",
         secure: true,
         maxAge: 24 * 60 * 60 * 1000,
       });
-      return res.status(200).json({ accessToken });
+      const { password, refreshToken, ...rest } = updatedUser.toObject();
+      return res.status(200).json({ user: rest, accessToken });
     }
-  } catch {
+  } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
@@ -85,7 +100,7 @@ const refreshToken = async (req, res) => {
     const accessToken = jwt.sign(
       { userId: foundUser._id },
       ACCESS_TOKEN_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "15s" }
     );
     return res.status(200).json({ accessToken });
   });

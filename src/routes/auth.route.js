@@ -9,7 +9,7 @@ const {
 
 router.post("/register", register);
 router.post("/login", login);
-router.post("/refresh", refreshToken);
+router.get("/refresh", refreshToken);
 router.get("/logout", logout);
 
 module.exports = router;
