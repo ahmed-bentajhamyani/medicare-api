@@ -8,8 +8,6 @@
     ],
     "routes": [
         {
-            "src": "/(.*)",
-            "dest": "./index.js",
             "methods": [
                 "GET",
                 "POST",
@@ -19,10 +17,7 @@
                 "OPTIONS"
             ],
             "headers": {
-                "Access-Control-Allow-Origin": [
-                    "https://medicare-consultations.vercel.app",
-                    "http://localhost:4200"
-                ]
+                "Access-Control-Allow-Origin": "https://medicare-consultations.vercel.app"
             }
         }
     ]
