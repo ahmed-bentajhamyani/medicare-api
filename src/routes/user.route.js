@@ -15,10 +15,10 @@ const verifyToken = require("../middlewares/authMiddleware");
 router.get("/", verifyToken, getUsers);
 
 // get all doctors
-router.get("/doctors", verifyToken, getDoctors);
+// router.get("/doctors", verifyToken, getDoctors);
 
 // get all patients
-router.get("/patients", verifyToken, getPatients);
+// router.get("/patients", verifyToken, getPatients);
 
 // get a user
 router.get("/:id", verifyToken, getUser);

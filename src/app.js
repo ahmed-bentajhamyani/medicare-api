@@ -13,8 +13,6 @@ const consultationRoute = require("./routes/consultation.route");
 
 const app = express();
 
-const PORT = process.env.PORT || 8000;
-
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
 
@@ -40,4 +38,4 @@ app.use("/", (req, res) => {
 // database connection
 dbConnection();
 
-app.listen(PORT, () => console.log("Server is running on port", PORT));
+module.exports = app;
