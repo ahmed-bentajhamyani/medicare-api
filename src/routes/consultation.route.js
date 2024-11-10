@@ -16,19 +16,23 @@ const {
 const verifyToken = require("../middlewares/authMiddleware");
 
 // get all consultations
-router.get("/", getConsultations);
+router.get("/", verifyToken, getConsultations);
 
 // get all pending consultations
-router.get("/pending", getPendingConsultations);
+router.get("/pending", verifyToken, getPendingConsultations);
 
 // get consultations by doctor
-router.get("/by-doctor/:doctorId", getConsultationsByDoctor);
+router.get("/by-doctor/:doctorId", verifyToken, getConsultationsByDoctor);
 
 // get consultations by patient
-router.get("/by-patient/:patientId", getConsultationsByPatient);
+router.get("/by-patient/:patientId", verifyToken, getConsultationsByPatient);
 
 // get consultations by patient
-router.get("/patient-doctor/:patientId/:doctorId", getConsultationsPatientDoctor);
+router.get(
+  "/patient-doctor/:patientId/:doctorId",
+  verifyToken,
+  getConsultationsPatientDoctor
+);
 
 // get a consultation
 router.get("/:id", getConsultation);
@@ -37,15 +41,15 @@ router.get("/:id", getConsultation);
 router.post("/", verifyToken, createConsultation);
 
 // update consultation
-router.put("/:id", updateConsultation);
+router.put("/:id", verifyToken, updateConsultation);
 
 // accept consultation
-router.put("/accept/:id", acceptConsultation);
+router.put("/accept/:id", verifyToken, acceptConsultation);
 
 // reject consultation
-router.put("/reject/:id", rejectConsultation);
+router.put("/reject/:id", verifyToken, rejectConsultation);
 
 // delete consultation
-router.delete("/:id", deleteConsultation);
+router.delete("/:id", verifyToken, deleteConsultation);
 
 module.exports = router;
