@@ -13,6 +13,18 @@ const getDoctors = async (req, res) => {
   }
 };
 
+// get a doctor
+const getDoctor = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await doctorModel.findById(id);
+    return res.status(200).json(user);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // create user
 const createDoctor = async (req, res) => {
   const { password, ...data } = req.body;
@@ -49,6 +61,7 @@ const updateDoctor = async (req, res) => {
 
 module.exports = {
   getDoctors,
+  getDoctor,
   createDoctor,
   updateDoctor,
 };
