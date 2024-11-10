@@ -5,6 +5,7 @@ const {
   getPendingConsultations,
   getConsultationsByDoctor,
   getConsultationsByPatient,
+  getConsultationsPatientDoctor,
   getConsultation,
   createConsultation,
   updateConsultation,
@@ -25,6 +26,9 @@ router.get("/by-doctor/:doctorId", getConsultationsByDoctor);
 
 // get consultations by patient
 router.get("/by-patient/:patientId", getConsultationsByPatient);
+
+// get consultations by patient
+router.get("/patient-doctor/:patientId/:doctorId", getConsultationsPatientDoctor);
 
 // get a consultation
 router.get("/:id", getConsultation);

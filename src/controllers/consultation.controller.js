@@ -35,12 +35,12 @@ const getConsultationsByDoctor = async (req, res) => {
   const { doctorId } = req.params;
 
   try {
-    const pendingConsultations = await consultationModel
+    const doctorConsultations = await consultationModel
       .find({ doctor: doctorId })
       .populate("patient")
       .populate("doctor")
       .sort({ createdAt: -1 });
-    return res.status(200).json(pendingConsultations);
+    return res.status(200).json(doctorConsultations);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -51,12 +51,28 @@ const getConsultationsByPatient = async (req, res) => {
   const { patientId } = req.params;
 
   try {
-    const pendingConsultations = await consultationModel
+    const patientConsultations = await consultationModel
       .find({ patient: patientId })
       .populate("patient")
       .populate("doctor")
       .sort({ createdAt: -1 });
-    return res.status(200).json(pendingConsultations);
+    return res.status(200).json(patientConsultations);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+// get consultations patient doctor
+const getConsultationsPatientDoctor = async (req, res) => {
+  const { patientId, doctorId } = req.params;
+
+  try {
+    const consultations = await consultationModel
+      .find({ patient: patientId, doctor: doctorId })
+      .populate("patient")
+      .populate("doctor")
+      .sort({ createdAt: -1 });
+    return res.status(200).json(consultations);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -180,6 +196,7 @@ module.exports = {
   getPendingConsultations,
   getConsultationsByDoctor,
   getConsultationsByPatient,
+  getConsultationsPatientDoctor,
   getConsultation,
   createConsultation,
   updateConsultation,
