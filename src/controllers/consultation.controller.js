@@ -95,15 +95,15 @@ const getConsultation = async (req, res) => {
 
 // create consultation
 const createConsultation = async (req, res) => {
-  const { date, doctorUsername } = req.body;
+  const { date, description, doctor } = req.body;
   const patientId = res.userId;
 
   try {
     const patient = await userModel.findById(patientId);
-    const doctor = await userModel.findOne({ username: doctorUsername });
 
     const consultation = {
       date,
+      description,
       patient: patient._id,
       doctor: doctor._id,
     };

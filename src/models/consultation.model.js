@@ -7,6 +7,10 @@ const ConsultationSchema = mongoose.Schema(
       type: Date,
       required: true,
     },
+    description: {
+      type: String,
+      required: false,
+    },
     status: {
       type: String,
       enum: [
